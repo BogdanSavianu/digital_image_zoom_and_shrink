@@ -1,9 +1,5 @@
 #include "OperationUtility.h"
 
-bool is_high_scale(double scale) {
-    return scale > 10.0;
-}
-
 template<typename Func>
 std::pair<bool, unsigned long long> run_with_timeout(Func&& func, int timeout_seconds) {
     std::promise<unsigned long long> result_promise;

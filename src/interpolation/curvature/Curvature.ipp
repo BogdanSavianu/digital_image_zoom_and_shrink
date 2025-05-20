@@ -15,9 +15,9 @@ float Curvature<Pixel>::get_pixel_value(const Mat_<Pixel> &source, int i, int j,
     j = clamp(j, 0, source.cols - 1);
     
     if constexpr (std::is_same_v<Pixel, uchar>) {
-        return static_cast<float>(source(i, j));
+        return (float)(source(i, j));
     } else {
-        return static_cast<float>(source(i, j)[channel]);
+        return (float)(source(i, j)[channel]);
     }
 }
 
@@ -62,8 +62,8 @@ float Curvature<Pixel>::second_derivative_xy(const Mat_<Pixel> &source, int i, i
 
 template<>
 uchar Curvature<uchar>::new_color(const Mat_<uchar> &source, float x, float y) {
-    int x0 = static_cast<int>(std::floor(x));
-    int y0 = static_cast<int>(std::floor(y));
+    int x0 = (int)(std::floor(x));
+    int y0 = (int)(std::floor(y));
     
     x0 = clamp(x0, 0, source.cols - 1);
     y0 = clamp(y0, 0, source.rows - 1);
@@ -87,7 +87,7 @@ uchar Curvature<uchar>::new_color(const Mat_<uchar> &source, float x, float y) {
                           2.0f * d2I_dxy * dx * dy + 
                           d2I_dy2 * dy * dy);
     
-    return (uchar)(clamp(static_cast<int>(std::round(result)), 0, 255));
+    return (uchar)(clamp((int)(std::round(result)), 0, 255));
 }
 
 template<>
@@ -151,8 +151,8 @@ Mat Curvature<Pixel>::shrink(const Mat_<Pixel> &source, double scale_factor) {
 
 template<typename Pixel>
 Mat Curvature<Pixel>::zoom(const Mat_<Pixel> &source, double scale_factor_x, double scale_factor_y) {
-    int new_rows = static_cast<int>(source.rows * scale_factor_y);
-    int new_cols = static_cast<int>(source.cols * scale_factor_x);
+    int new_rows = (int)(source.rows * scale_factor_y);
+    int new_cols = (int)(source.cols * scale_factor_x);
     Mat_<Pixel> result(new_rows, new_cols);
 
     for (int i = 0; i < new_rows; ++i) {

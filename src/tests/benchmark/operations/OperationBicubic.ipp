@@ -2,17 +2,6 @@
 #include "../../../interpolation/bicubic/Bicubic.h"
 
 template <typename Pixel>
-inline float OperationBicubic<Pixel>::cubic_weight(float x) {
-    OperationsCounter::add(5);
-    x = std::abs(x);
-    return x < 1.0f
-            ? (1.5f * x - 2.5f) * x * x + 1.0f
-            : (x < 2.0f
-                ? ((-0.5f * x + 2.5f) * x - 4.0f) * x + 2.0f
-                : 0.0f);
-}
-
-template <typename Pixel>
 Mat OperationBicubic<Pixel>::zoom(const Mat_<Pixel> &source, double scale_factor) {
     OperationsCounter::reset();
     

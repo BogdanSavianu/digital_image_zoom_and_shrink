@@ -34,44 +34,48 @@ double calculate_accuracy(const Mat &result, const Mat &opencv_result) {
 
 template <typename Pixel>
 void benchmark_accuracy(const Mat_<Pixel> &source, double scale_factor) {
-    Mat opencv_result;
-    resize(source, opencv_result, Size(), scale_factor, scale_factor, INTER_CUBIC);
-    
+    Mat opencv_nn;
+    Mat opencv_bilinear;
+    Mat opencv_bicubic;
+    resize(source, opencv_nn, Size(), scale_factor, scale_factor, INTER_NEAREST);
+    resize(source, opencv_bilinear, Size(), scale_factor, scale_factor, INTER_LINEAR);
+    resize(source, opencv_bicubic, Size(), scale_factor, scale_factor, INTER_CUBIC);
+
     Mat nn_result = NearestNeighbor<Pixel>::getInstance().zoom(source, scale_factor);
     Mat bl_result = Bilinear<Pixel>::getInstance().zoom(source, scale_factor);
     Mat bc_result = Bicubic<Pixel>::getInstance().zoom(source, scale_factor);
-    Mat cv_result = Curvature<Pixel>::getInstance().zoom(source, scale_factor);
-    
-    double nn_accuracy = calculate_accuracy<Pixel>(nn_result, opencv_result);
-    double bl_accuracy = calculate_accuracy<Pixel>(bl_result, opencv_result);
-    double bc_accuracy = calculate_accuracy<Pixel>(bc_result, opencv_result);
-    double cv_accuracy = calculate_accuracy<Pixel>(cv_result, opencv_result);
-    
+
+    double nn_accuracy = calculate_accuracy<Pixel>(nn_result, opencv_nn);
+    double bl_accuracy = calculate_accuracy<Pixel>(bl_result, opencv_bilinear);
+    double bc_accuracy = calculate_accuracy<Pixel>(bc_result, opencv_bicubic);
+
     std::cout << "\n--- ACCURACY BENCHMARK (scale=" << scale_factor << ") ---\n";
     std::cout << "Nearest Neighbor: " << std::fixed << std::setprecision(6) << nn_accuracy * 100 << "%" << std::endl;
     std::cout << "Bilinear: " << std::fixed << std::setprecision(6) << bl_accuracy * 100 << "%" << std::endl;
     std::cout << "Bicubic: " << std::fixed << std::setprecision(6) << bc_accuracy * 100 << "%" << std::endl;
-    std::cout << "Curvature: " << std::fixed << std::setprecision(6) << cv_accuracy * 100 << "%" << std::endl;
+    std::cout << "Curvature interpolation is not part of OpenCV's interpolation options."<< std::endl;
 }
 
 template <typename Pixel>
 void benchmark_accuracy_xy(const Mat_<Pixel> &source, double scale_factor_x, double scale_factor_y) {
-    Mat opencv_result;
-    resize(source, opencv_result, Size(), scale_factor_x, scale_factor_y, INTER_LANCZOS4);
-    
+    Mat opencv_nn;
+    Mat opencv_bilinear;
+    Mat opencv_bicubic;
+    resize(source, opencv_nn, Size(), scale_factor_x, scale_factor_y, INTER_NEAREST);
+    resize(source, opencv_bilinear, Size(), scale_factor_x, scale_factor_y, INTER_LINEAR);
+    resize(source, opencv_bicubic, Size(), scale_factor_x, scale_factor_y, INTER_CUBIC);
+
     Mat nn_result = NearestNeighbor<Pixel>::getInstance().zoom(source, scale_factor_x, scale_factor_y);
     Mat bl_result = Bilinear<Pixel>::getInstance().zoom(source, scale_factor_x, scale_factor_y);
     Mat bc_result = Bicubic<Pixel>::getInstance().zoom(source, scale_factor_x, scale_factor_y);
-    Mat cv_result = Curvature<Pixel>::getInstance().zoom(source, scale_factor_x, scale_factor_y);
-    
-    double nn_accuracy = calculate_accuracy<Pixel>(nn_result, opencv_result);
-    double bl_accuracy = calculate_accuracy<Pixel>(bl_result, opencv_result);
-    double bc_accuracy = calculate_accuracy<Pixel>(bc_result, opencv_result);
-    double cv_accuracy = calculate_accuracy<Pixel>(cv_result, opencv_result);
-    
+
+    double nn_accuracy = calculate_accuracy<Pixel>(nn_result, opencv_nn);
+    double bl_accuracy = calculate_accuracy<Pixel>(bl_result, opencv_bilinear);
+    double bc_accuracy = calculate_accuracy<Pixel>(bc_result, opencv_bicubic);
+
     std::cout << "\n--- ACCURACY BENCHMARK (scale_x=" << scale_factor_x << ", scale_y=" << scale_factor_y << ") ---\n";
     std::cout << "Nearest Neighbor: " << std::fixed << std::setprecision(6) << nn_accuracy * 100 << "%" << std::endl;
     std::cout << "Bilinear: " << std::fixed << std::setprecision(6) << bl_accuracy * 100 << "%" << std::endl;
     std::cout << "Bicubic: " << std::fixed << std::setprecision(6) << bc_accuracy * 100 << "%" << std::endl;
-    std::cout << "Curvature: " << std::fixed << std::setprecision(6) << cv_accuracy * 100 << "%" << std::endl;
+    std::cout << "Curvature interpolation is not part of OpenCV's interpolation options."<< std::endl;
 } 

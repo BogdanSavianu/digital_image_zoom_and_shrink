@@ -10,7 +10,8 @@ int main() {
     std::cout << "2. Run accuracy benchmarks" << std::endl;
     std::cout << "3. Run operations count benchmarks" << std::endl;
     std::cout << "4. Run timing benchmarks" << std::endl;
-    std::cout << "Enter choice (1-4): ";
+    std::cout << "5. Run corner case tests" << std::endl;
+    std::cout << "Enter choice (1-5): ";
     
     int choice;
     std::cin >> choice;
@@ -27,6 +28,9 @@ int main() {
             break;
         case 4:
             run_benchmarks(BenchmarkType::TIMING);
+            break;
+        case 5:
+            run_corner_case_tests();
             break;
         default:
             std::cout << "Invalid choice. Exiting." << std::endl;

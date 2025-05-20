@@ -16,6 +16,12 @@
 
 using namespace cv;
 
+enum class BenchmarkType {
+    ACCURACY,
+    OPERATIONS,
+    TIMING
+};
+
 template <typename Pixel>
 void test_nn_zoom(Mat_<Pixel> &source, const std::string &image_name);
 
@@ -64,12 +70,6 @@ void test_curvature_zoom_xy(Mat_<Pixel> &source, double scale_x, double scale_y,
 template <typename Pixel>
 void test_curvature_shrink_xy(Mat_<Pixel> &source, double scale_x, double scale_y, const std::string &image_name);
 
-enum class BenchmarkType {
-    ACCURACY,
-    OPERATIONS,
-    TIMING
-};
-
 template <typename Pixel>
 void benchmark_accuracy(const Mat_<Pixel> &source, double scale_factor);
 
@@ -111,6 +111,7 @@ void run_benchmarks_for_image(const Mat_<Pixel> &source, BenchmarkType type);
 void run_benchmarks(BenchmarkType type);
 
 void run_tests();
+void run_corner_case_tests();
 
 #include "RunTests.ipp"
 

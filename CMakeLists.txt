@@ -21,6 +21,13 @@ add_executable(Project main.cpp
         src/interpolation/curvature/Curvature.ipp
         src/interpolation/curvature/Curvature.h
         src/tests/benchmark/utils/OperationsCounter.cpp
-        src/tests/benchmark/utils/OperationUtility.ipp)
+        src/tests/benchmark/utils/OperationUtility.ipp
+        src/tests/benchmark/utils/OperationsCounter.h
+        src/tests/benchmark/utils/OperationUtility.h
+        src/tests/benchmark/utils/OperationsCounter.cpp
+        src/tests/benchmark/utils/OperationUtility.ipp
+        src/tests/benchmark/utils/OperationsCounter.h
+        src/tests/benchmark/utils/OperationUtility.h
+        )
 
 target_link_libraries(Project ${OpenCV_LIBS})

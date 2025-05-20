@@ -187,7 +187,7 @@ std::vector<double> get_custom_scales(const std::string &scale_type) {
     return scales;
 }
 
-bool get_non_uniform_test_choice() {
+inline bool get_non_uniform_test_choice() {
     std::cout << "Do you want to test non-uniform scaling (different x and y scales)? (y/n): ";
     char choice;
     std::cin >> choice;
@@ -373,7 +373,7 @@ void run_tests() {
 template<typename Pixel>
 void run_benchmarks_for_image(const Mat_<Pixel> &source, BenchmarkType type) {
     std::cout << "Enter custom scales for benchmarking:" << std::endl;
-    std::vector<double> scales = get_custom_scales(type == BenchmarkType::ACCURACY ? "benchmark" : "benchmark");
+    std::vector<double> scales = get_custom_scales("benchmark");
     
     bool test_non_uniform = get_non_uniform_test_choice();
     std::pair<double, double> non_uniform_scales;
@@ -439,4 +439,65 @@ void run_benchmarks(BenchmarkType type) {
         std::cerr << "Invalid image choice." << std::endl;
         return;
     }
+}
+
+void run_corner_case_tests() {
+    std::cout << "\n--- CORNER CASE TESTS ---" << std::endl;
+    std::cout << "Select image for corner case tests:" << std::endl;
+    std::cout << "1. Triangles (grayscale)" << std::endl;
+    std::cout << "2. Lines (grayscale)" << std::endl;
+    std::cout << "Enter choice (1-2): ";
+
+    int image_choice;
+    std::cin >> image_choice;
+
+    std::string image_path;
+    std::string image_name;
+
+    if (image_choice == 1) {
+        image_path = "/Users/bogdansavianu/University/Year3/Sem2/Image_Processing/Project/images/triangles.jpg";
+        image_name = "Triangles";
+    } else if (image_choice == 2) {
+        image_path = "/Users/bogdansavianu/University/Year3/Sem2/Image_Processing/Project/images/lines.jpg";
+        image_name = "Lines";
+    } else {
+        std::cerr << "Invalid image choice. Exiting corner case tests." << std::endl;
+        return;
+    }
+
+    Mat source = imread(image_path, IMREAD_GRAYSCALE);
+    if (source.empty()) {
+        std::cerr << "Could not read the image: " << image_path << std::endl;
+        return;
+    }
+
+    Mat_<uchar> source_mat_uchar = source;
+
+    double scale_x, scale_y;
+    std::cout << "Enter scale factor for X dimension: ";
+    std::cin >> scale_x;
+    std::cout << "Enter scale factor for Y dimension: ";
+    std::cin >> scale_y;
+
+    if (scale_x <= 0 || scale_y <= 0) {
+        std::cerr << "Scale factors must be positive." << std::endl;
+        return;
+    }
+
+    std::cout << "Running interpolations for " << image_name << " with scale_x=" << scale_x << ", scale_y=" << scale_y << std::endl;
+
+    Mat nn_result = NearestNeighbor<uchar>::getInstance().zoom(source_mat_uchar, scale_x, scale_y);
+    imshow(image_name + " NN (x" + std::to_string(scale_x) + ", y" + std::to_string(scale_y) + ")", nn_result);
+
+    Mat bl_result = Bilinear<uchar>::getInstance().zoom(source_mat_uchar, scale_x, scale_y);
+    imshow(image_name + " Bilinear (x" + std::to_string(scale_x) + ", y" + std::to_string(scale_y) + ")", bl_result);
+
+
+    Mat bc_result = Bicubic<uchar>::getInstance().zoom(source_mat_uchar, scale_x, scale_y);
+    imshow(image_name + " Bicubic (x" + std::to_string(scale_x) + ", y" + std::to_string(scale_y) + ")", bc_result);
+    
+    Mat cv_result = Curvature<uchar>::getInstance().zoom(source_mat_uchar, scale_x, scale_y);
+    imshow(image_name + " Curvature (x" + std::to_string(scale_x) + ", y" + std::to_string(scale_y) + ")", cv_result);
+
+    waitKey();
 }

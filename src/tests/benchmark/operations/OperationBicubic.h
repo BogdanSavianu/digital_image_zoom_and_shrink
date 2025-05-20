@@ -18,8 +18,6 @@ public:
     Mat zoom(const Mat_<Pixel> &source, double scale_factor);
     Mat zoom(const Mat_<Pixel> &source, double scale_factor_x, double scale_factor_y);
     
-private:
-    inline float cubic_weight(float x);
 };
 
 #include "OperationBicubic.ipp"

@@ -24,7 +24,7 @@ void benchmark_operations(const Mat_<Pixel> &source, double scale_factor);
 template <typename Pixel>
 void benchmark_operations_xy(const Mat_<Pixel> &source, double scale_factor_x, double scale_factor_y);
 
-static constexpr const int timeout = 120;
+static constexpr const unsigned int timeout = 120;
 
 #include "BenchmarkOperations.ipp"
 
