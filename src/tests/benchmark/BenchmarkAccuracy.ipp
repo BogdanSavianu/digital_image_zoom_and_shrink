@@ -33,7 +33,7 @@ double calculate_accuracy_pixel_by_pixel(const Mat_<Pixel> &result, const Mat_<P
 }
 
 template <typename Pixel>
-std::pair<double,double> calculate_accuracy_mse(const Mat_<Pixel> &result, const Mat_<Pixel> &opencv_result) {
+double calculate_accuracy_mse(const Mat_<Pixel> &result, const Mat_<Pixel> &opencv_result) {
     double total_diff = 0;
     double max_possible_diff = 0;
     double diff;
@@ -56,7 +56,7 @@ std::pair<double,double> calculate_accuracy_mse(const Mat_<Pixel> &result, const
         }
     }
 
-    return {1.0 - (total_diff / max_possible_diff), total_diff/(result.rows * result.cols * 3)};
+    return total_diff/(result.rows * result.cols * 3);
 }
 
 template <typename Pixel>
@@ -83,26 +83,29 @@ void benchmark_accuracy(const Mat_<Pixel> &source, double scale_factor) {
     std::cout << "Bicubic: " << std::fixed << std::setprecision(6) << bc_accuracy * 100 << "%" << std::endl;
     std::cout << "Curvature interpolation is not part of OpenCV's interpolation options."<< std::endl;
 
-    std::pair<double,double> nn_accuracy_mse = calculate_accuracy_mse<Pixel>(nn_result, opencv_nn);
-    std::pair<double,double> bl_accuracy_mse = calculate_accuracy_mse<Pixel>(bl_result, opencv_bilinear);
-    std::pair<double,double> bc_accuracy_mse = calculate_accuracy_mse<Pixel>(bc_result, opencv_bicubic);
-
-    std::cout << "\n - Mean Squared Error - \n";
-    std::cout << "Nearest Neighbor: " << std::fixed << std::setprecision(6) << nn_accuracy_mse.first * 100 << "%, " << "Actual value: " << nn_accuracy_mse.second << std::endl;
-    std::cout << "Bilinear: " << std::fixed << std::setprecision(6) << bl_accuracy_mse.first * 100 << "%, " << "Actual value: " << bl_accuracy_mse.second << std::endl;
-    std::cout << "Bicubic: " << std::fixed << std::setprecision(6) << bc_accuracy_mse.first * 100 << "%, " << "Actual value: " << bc_accuracy_mse.second << std::endl;
-    std::cout << "Curvature interpolation is not part of OpenCV's interpolation options."<< std::endl;
+    double nn_accuracy_mse = calculate_accuracy_mse<Pixel>(nn_result, opencv_nn);
+    double bl_accuracy_mse = calculate_accuracy_mse<Pixel>(bl_result, opencv_bilinear);
+    double bc_accuracy_mse = calculate_accuracy_mse<Pixel>(bc_result, opencv_bicubic);
 
     double max_value;
     if constexpr (std::is_same_v<Pixel,uchar>)
         max_value = 255*255;
     else max_value = 255*255*3;
 
-    double nn_accuracy_psnr = 10 * log10(max_value/nn_accuracy_mse.second);
-    double bl_accuracy_psnr = 10 * log10(max_value/bl_accuracy_mse.second);
-    double bc_accuracy_psnr = 10 * log10(max_value/bc_accuracy_mse.second);
+    std::cout << "\n - Mean Squared Error - \n";
+    std::cout << "Should be small relative to max value: " << max_value << std::endl;
+
+    std::cout << "Nearest Neighbor: " << std::fixed << std::setprecision(6) << nn_accuracy_mse << std::endl;
+    std::cout << "Bilinear: " << std::fixed << std::setprecision(6) << bl_accuracy_mse << std::endl;
+    std::cout << "Bicubic: " << std::fixed << std::setprecision(6) << bc_accuracy_mse << std::endl;
+    std::cout << "Curvature interpolation is not part of OpenCV's interpolation options."<< std::endl;
+
+    double nn_accuracy_psnr = 10 * log10(max_value/nn_accuracy_mse);
+    double bl_accuracy_psnr = 10 * log10(max_value/bl_accuracy_mse);
+    double bc_accuracy_psnr = 10 * log10(max_value/bc_accuracy_mse);
 
     std::cout << "\n - Peak Signal-to-Noise Ratio - \n";
+    std::cout << "Should be high" << std::endl;
 
     std::cout << "Nearest Neighbor: " << std::fixed << std::setprecision(6) << nn_accuracy_psnr << std::endl;
     std::cout << "Bilinear: " << std::fixed << std::setprecision(6) << bl_accuracy_psnr << std::endl;
@@ -133,24 +136,25 @@ void benchmark_accuracy_xy(const Mat_<Pixel> &source, double scale_factor_x, dou
     std::cout << "Bicubic: " << std::fixed << std::setprecision(6) << bc_accuracy * 100 << "%" << std::endl;
     std::cout << "Curvature interpolation is not part of OpenCV's interpolation options."<< std::endl;
 
-    std::pair<double,double> nn_accuracy_mse = calculate_accuracy_mse<Pixel>(nn_result, opencv_nn);
-    std::pair<double,double> bl_accuracy_mse = calculate_accuracy_mse<Pixel>(bl_result, opencv_bilinear);
-    std::pair<double,double> bc_accuracy_mse = calculate_accuracy_mse<Pixel>(bc_result, opencv_bicubic);
-
-    std::cout << "\n - Mean Squared Error - \n";
-    std::cout << "Nearest Neighbor: " << std::fixed << std::setprecision(6) << nn_accuracy_mse.first * 100 << "%, " << "Actual value: " << nn_accuracy_mse.second << std::endl;
-    std::cout << "Bilinear: " << std::fixed << std::setprecision(6) << bl_accuracy_mse.first * 100 << "%, " << "Actual value: " << bl_accuracy_mse.second << std::endl;
-    std::cout << "Bicubic: " << std::fixed << std::setprecision(6) << bc_accuracy_mse.first * 100 << "%, " << "Actual value: " << bc_accuracy_mse.second << std::endl;
-    std::cout << "Curvature interpolation is not part of OpenCV's interpolation options."<< std::endl;
+    double nn_accuracy_mse = calculate_accuracy_mse<Pixel>(nn_result, opencv_nn);
+    double bl_accuracy_mse = calculate_accuracy_mse<Pixel>(bl_result, opencv_bilinear);
+    double bc_accuracy_mse = calculate_accuracy_mse<Pixel>(bc_result, opencv_bicubic);
 
     double max_value;
     if constexpr (std::is_same_v<Pixel,uchar>)
-        max_value = 255;
-    else max_value = 255*3;
+        max_value = 255*255;
+    else max_value = 255*255*3;
 
-    double nn_accuracy_psnr = 10 * log10(max_value/nn_accuracy_mse.second);
-    double bl_accuracy_psnr = 10 * log10(max_value/bl_accuracy_mse.second);
-    double bc_accuracy_psnr = 10 * log10(max_value/bc_accuracy_mse.second);
+    std::cout << "\n - Mean Squared Error - \n";
+    std::cout << "Should be small relative to max value: " << max_value << std::endl;
+    std::cout << "Nearest Neighbor: " << std::fixed << std::setprecision(6) << nn_accuracy_mse << std::endl;
+    std::cout << "Bilinear: " << std::fixed << std::setprecision(6) << bl_accuracy_mse << std::endl;
+    std::cout << "Bicubic: " << std::fixed << std::setprecision(6) << bc_accuracy_mse << std::endl;
+    std::cout << "Curvature interpolation is not part of OpenCV's interpolation options."<< std::endl;
+
+    double nn_accuracy_psnr = 10 * log10(max_value/nn_accuracy_mse);
+    double bl_accuracy_psnr = 10 * log10(max_value/bl_accuracy_mse);
+    double bc_accuracy_psnr = 10 * log10(max_value/bc_accuracy_mse);
 
     std::cout << "\n - Peak Signal-to-Noise Ratio - \n";
 
