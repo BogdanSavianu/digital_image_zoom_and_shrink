@@ -12,10 +12,10 @@
 using namespace cv;
 
 template <typename Pixel>
-double calculate_accuracy_pixel_by_pixel(const Mat &result, const Mat &opencv_result);
+double calculate_accuracy_pixel_by_pixel(const Mat_<Pixel> &result, const Mat_<Pixel> &opencv_result);
 
 template <typename Pixel>
-double calculate_accuracy_mse(const Mat &result, const Mat &opencv_result);
+std::pair<double,double> calculate_accuracy_mse(const Mat_<Pixel> &result, const Mat_<Pixel> &opencv_result);
 
 template <typename Pixel>
 void benchmark_accuracy(const Mat_<Pixel> &source, double scale_factor);
